@@ -18,15 +18,15 @@ ArducamSSD1306 display(OLED_RESET); // FOR I2C
 
 /************************* WiFi Access Point *********************************/
 
-#define WLAN_SSID "*****"    // your wifi name
-#define WLAN_PASS "*****"   // your wifi password
+#define WLAN_SSID "*****"
+#define WLAN_PASS "*****"
 
 /************************* Adafruit.io Setup *********************************/
 
 #define AIO_SERVER "io.adafruit.com"
-#define AIO_SERVERPORT 1883   // use 8883 for SSL
-#define AIO_USERNAME "*****"  // your io adafruit username    
-#define AIO_KEY "*****"       // your io adafruit key
+#define AIO_SERVERPORT 1883 // use 8883 for SSL
+#define AIO_USERNAME "*****"
+#define AIO_KEY "*****"
 
 /************ Global State (you don't need to change this!) ******************/
 
@@ -86,10 +86,7 @@ void setup()
   previousMillis = 0;
 
   attachInterrupt(digitalPinToInterrupt(SENSOR), pulseCounter, FALLING);
-
-  /******************** Setup wifi & MQTT access ******************************/
-
-  // Connect to WiFi access point.
+  Serial.begin(9600);
   Serial.println();
   Serial.println();
   Serial.print("Connecting to ");
@@ -100,12 +97,14 @@ void setup()
   {
     delay(500);
     Serial.print(".");
+    showDisplay("Wifi", 0);
   }
   Serial.println();
 
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+  showDisplay("IP Address", 1.1);
 }
 
 void loop()
@@ -175,7 +174,7 @@ void loop()
     if ((flowRate == 0) && (totalMilliLitres != 0))
     {
       UploadtoAdafruit(totalMilliLitres, totalLitres, totalGallons);
-      showDisplay(totalLitres);
+      showDisplay("Liters",totalLitres);
     }
 
     pulseCount = 0;
@@ -197,7 +196,7 @@ void UploadtoAdafruit(unsigned int ml, float L, float G)
 }
 
 // Method to display the liters on the screen
-void showDisplay(int lt)
+void showDisplay(char title[10], float lt)
 {
   
    display.begin();  // Switch OLED
@@ -206,7 +205,7 @@ void showDisplay(int lt)
   display.setTextSize(2);
   display.setTextColor(WHITE);
   display.setCursor(5,0);  
-  display.println("Liters");
+  display.println(title);
   display.display();
 
   display.setTextSize(3);
